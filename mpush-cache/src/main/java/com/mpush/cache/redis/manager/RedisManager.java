@@ -42,6 +42,7 @@ public final class RedisManager implements CacheManager {
 
     private final RedisConnectionFactory factory = new RedisConnectionFactory();
 
+    @Override
     public void init() {
         Logs.CACHE.info("begin init redis...");
         factory.setPassword(CC.mp.redis.password);
@@ -131,6 +132,7 @@ public final class RedisManager implements CacheManager {
      * @param value
      * @param time  seconds
      */
+    @Override
     public void set(String key, String value, int time) {
         call(jedis -> {
             jedis.set(key, value);
@@ -140,6 +142,7 @@ public final class RedisManager implements CacheManager {
         });
     }
 
+    @Override
     public void del(String key) {
         call(jedis -> jedis.del(key));
     }
@@ -149,15 +152,18 @@ public final class RedisManager implements CacheManager {
     /*********************
      * hash redis start
      ********************************/
+    @Override
     public void hset(String key, String field, String value) {
         call(jedis -> jedis.hset(key, field, value));
     }
 
+    @Override
     public void hset(String key, String field, Object value) {
         hset(key, field, Jsons.toJson(value));
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T> T hget(String key, String field, Class<T> clazz) {
         String value = call(jedis -> jedis.hget(key, field), null);
         if (value == null) return null;
@@ -165,6 +171,7 @@ public final class RedisManager implements CacheManager {
         return Jsons.fromJson(value, clazz);
     }
 
+    @Override
     public void hdel(String key, String field) {
         call(jedis -> jedis.hdel(key, field));
     }
@@ -173,6 +180,7 @@ public final class RedisManager implements CacheManager {
         return call(jedis -> jedis.hgetAll(key), Collections.<String, String>emptyMap());
     }
 
+    @Override
     public <T> Map<String, T> hgetAll(String key, Class<T> clazz) {
         Map<String, String> result = hgetAll(key);
         if (result.isEmpty()) return Collections.emptyMap();
@@ -226,6 +234,7 @@ public final class RedisManager implements CacheManager {
         hmset(key, hash, 0);
     }
 
+    @Override
     public long hincrBy(String key, String field, long value) {
         return call(jedis -> jedis.hincrBy(key, field, value), 0L);
     }
@@ -236,6 +245,7 @@ public final class RedisManager implements CacheManager {
     /**
      * 从队列的左边入队
      */
+    @Override
     public void lpush(String key, String... value) {
         call(jedis -> jedis.lpush(key, value));
     }
@@ -282,6 +292,7 @@ public final class RedisManager implements CacheManager {
      * 偏移量都是基于0的下标，即list的第一个元素下标是0（list的表头），第二个元素下标是1，以此类推。
      * 偏移量也可以是负数，表示偏移量是从list尾部开始计数。 例如， -1 表示列表的最后一个元素，-2 是倒数第二个，以此类推。
      */
+    @Override
     public <T> List<T> lrange(String key, int start, int end, Class<T> clazz) {
         return call(jedis -> jedis.lrange(key, start, end), Collections.<String>emptyList())
                 .stream()
@@ -420,6 +431,7 @@ public final class RedisManager implements CacheManager {
         return null;
     }
 
+    @Override
     public void destroy() {
         if (factory != null) factory.destroy();
     }

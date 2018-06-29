@@ -25,6 +25,7 @@ package com.mpush.bootstrap;
  * @author ohun@live.cn
  */
 public class BootException extends RuntimeException {
+
     public BootException(String s) {
         super(s);
     }

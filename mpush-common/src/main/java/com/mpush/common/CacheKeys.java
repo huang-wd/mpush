@@ -19,19 +19,33 @@
 
 package com.mpush.common;
 
+/**
+ * @author
+ */
 public final class CacheKeys {
 
-    private static final String USER_PREFIX = "mp:ur:";//用户路由
+    /**
+     * 用户路由
+     */
+    private static final String USER_PREFIX = "mp:ur:";
 
-    private static final String SESSION_PREFIX = "mp:rs:";//可复用session
+    /**
+     * 可复用session
+     */
+    private static final String SESSION_PREFIX = "mp:rs:";
 
     private static final String FAST_CONNECTION_DEVICE_PREFIX = "mp:fcd:";
 
-    private static final String ONLINE_USER_LIST_KEY_PREFIX = "mp:oul:";//在线用户列表
+    /**
+     * 在线用户列表
+     */
+    private static final String ONLINE_USER_LIST_KEY_PREFIX = "mp:oul:";
+
+    public static final String PUSH_TASK_PREFIX = "mp:pt";
 
     public static final String SESSION_AES_KEY = "mp:sa";
+
     public static final String SESSION_AES_SEQ_KEY = "mp:sas";
-    public static final String PUSH_TASK_PREFIX = "mp:pt";
 
     public static String getUserRouteKey(String userId) {
         return USER_PREFIX + userId;

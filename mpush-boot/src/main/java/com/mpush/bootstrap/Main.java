@@ -21,6 +21,9 @@ package com.mpush.bootstrap;
 
 import com.mpush.tools.log.Logs;
 
+/**
+ * @author
+ */
 public class Main {
 
     /**

@@ -19,7 +19,6 @@
 
 package com.mpush.client.connect;
 
-
 import com.google.common.collect.Maps;
 import com.mpush.api.Constants;
 import com.mpush.api.connection.Connection;
@@ -84,11 +83,11 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
             Command command = Command.toCMD(packet.cmd);
             if (command == Command.HANDSHAKE) {
                 int connectedNum = STATISTICS.connectedNum.incrementAndGet();
-                connection.getSessionContext().changeCipher(new AesCipher(clientConfig.getClientKey(), clientConfig.getIv()));
+                connection.getSessionContext().setCipher(new AesCipher(clientConfig.getClientKey(), clientConfig.getIv()));
                 HandshakeOkMessage message = new HandshakeOkMessage(packet, connection);
                 message.decodeBody();
                 byte[] sessionKey = CipherBox.I.mixKey(clientConfig.getClientKey(), message.serverKey);
-                connection.getSessionContext().changeCipher(new AesCipher(sessionKey, clientConfig.getIv()));
+                connection.getSessionContext().setCipher(new AesCipher(sessionKey, clientConfig.getIv()));
                 connection.getSessionContext().setHeartbeat(message.heartbeat);
                 startHeartBeat(message.heartbeat - 1000);
                 LOGGER.info("handshake success, clientConfig={}, connectedNum={}", clientConfig, connectedNum);
@@ -102,7 +101,7 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
                 String[] cs = cipherStr.split(",");
                 byte[] key = AesCipher.toArray(cs[0]);
                 byte[] iv = AesCipher.toArray(cs[1]);
-                connection.getSessionContext().changeCipher(new AesCipher(key, iv));
+                connection.getSessionContext().setCipher(new AesCipher(key, iv));
 
                 FastConnectOkMessage message = new FastConnectOkMessage(packet, connection);
                 message.decodeBody();
@@ -244,7 +243,8 @@ public final class ConnClientChannelHandler extends ChannelInboundHandlerAdapter
         map.put("expireTime", expireTime + "");
         map.put("cipherStr", connection.getSessionContext().cipher.toString());
         String key = CacheKeys.getDeviceIdKey(client.getDeviceId());
-        cacheManager.set(key, map, 60 * 5); //5分钟
+        //5分钟
+        cacheManager.set(key, map, 60 * 5);
     }
 
     @SuppressWarnings("unchecked")

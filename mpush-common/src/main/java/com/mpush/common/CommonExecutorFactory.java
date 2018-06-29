@@ -44,6 +44,7 @@ import static com.mpush.tools.thread.ThreadNames.T_PUSH_CLIENT_TIMER;
  * @author ohun@live.cn (夜色)
  */
 public class CommonExecutorFactory implements ExecutorFactory {
+
     protected Executor get(ThreadPoolConfig config) {
         String name = config.getName();
         int corePoolSize = config.getCorePoolSize();
@@ -51,13 +52,15 @@ public class CommonExecutorFactory implements ExecutorFactory {
         int keepAliveSeconds = config.getKeepAliveSeconds();
         BlockingQueue<Runnable> queue = config.getQueue();
 
-        return new DefaultExecutor(corePoolSize
-                , maxPoolSize
-                , keepAliveSeconds
-                , TimeUnit.SECONDS
-                , queue
-                , new NamedPoolThreadFactory(name)
-                , new DumpThreadRejectedHandler(config));
+        return new DefaultExecutor(
+                corePoolSize,
+                maxPoolSize,
+                keepAliveSeconds,
+                TimeUnit.SECONDS,
+                queue,
+                new NamedPoolThreadFactory(name),
+                new DumpThreadRejectedHandler(config)
+        );
     }
 
     @Override

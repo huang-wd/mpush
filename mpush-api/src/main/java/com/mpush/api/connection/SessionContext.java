@@ -21,12 +21,16 @@ package com.mpush.api.connection;
 
 
 import com.mpush.api.router.ClientClassifier;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * Created by ohun on 2015/12/22.
  *
  * @author ohun@live.cn
  */
+@Data
+@Accessors(chain = true)
 public final class SessionContext {
     public String osName;
     public String osVersion;
@@ -34,42 +38,12 @@ public final class SessionContext {
     public String deviceId;
     public String userId;
     public String tags;
-    public int heartbeat = 10000;// 10s
+    /**
+     * 10s
+     */
+    public int heartbeat = 10000;
     public Cipher cipher;
     private byte clientType;
-
-    public void changeCipher(Cipher cipher) {
-        this.cipher = cipher;
-    }
-
-    public SessionContext setOsName(String osName) {
-        this.osName = osName;
-        return this;
-    }
-
-    public SessionContext setOsVersion(String osVersion) {
-        this.osVersion = osVersion;
-        return this;
-    }
-
-    public SessionContext setClientVersion(String clientVersion) {
-        this.clientVersion = clientVersion;
-        return this;
-    }
-
-    public SessionContext setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-        return this;
-    }
-
-    public SessionContext setUserId(String userId) {
-        this.userId = userId;
-        return this;
-    }
-
-    public void setHeartbeat(int heartbeat) {
-        this.heartbeat = heartbeat;
-    }
 
     public boolean handshakeOk() {
         return deviceId != null && deviceId.length() > 0;

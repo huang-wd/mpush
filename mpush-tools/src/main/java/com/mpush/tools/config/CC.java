@@ -39,9 +39,14 @@ import static java.util.stream.Collectors.toCollection;
 public interface CC {
     Config cfg = load();
 
+    /**
+     * @return
+     */
     static Config load() {
-        Config config = ConfigFactory.load();//扫描加载所有可用的配置文件
-        String custom_conf = "mp.conf";//加载自定义配置, 值来自jvm启动参数指定-Dmp.conf
+        //扫描加载所有可用的配置文件
+        Config config = ConfigFactory.load();
+        //加载自定义配置, 值来自jvm启动参数指定-Dmp.conf
+        String custom_conf = "mp.conf";
         if (config.hasPath(custom_conf)) {
             File file = new File(config.getString(custom_conf));
             if (file.exists()) {
@@ -76,15 +81,17 @@ public interface CC {
             String epoll_provider = cfg.getString("epoll-provider");
 
             static boolean useNettyEpoll() {
-                if (!"netty".equals(CC.mp.core.epoll_provider)) return false;
+                if (!"netty".equals(CC.mp.core.epoll_provider)) {
+                    return false;
+                }
                 String name = CC.cfg.getString("os.name").toLowerCase(Locale.UK).trim();
-                return name.startsWith("linux");//只在linux下使用netty提供的epoll库
+                //只在linux下使用netty提供的epoll库
+                return name.startsWith("linux");
             }
         }
 
         interface net {
             Config cfg = mp.cfg.getObject("net").toConfig();
-
             String local_ip = cfg.getString("local-ip");
             String public_ip = cfg.getString("public-ip");
 
@@ -92,7 +99,6 @@ public interface CC {
             String connect_server_bind_ip = cfg.getString("connect-server-bind-ip");
             String connect_server_register_ip = cfg.getString("connect-server-register-ip");
             Map<String, Object> connect_server_register_attr = cfg.getObject("connect-server-register-attr").unwrapped();
-
 
             int admin_server_port = cfg.getInt("admin-server-port");
 

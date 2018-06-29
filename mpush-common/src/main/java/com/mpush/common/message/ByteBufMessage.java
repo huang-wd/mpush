@@ -54,8 +54,18 @@ public abstract class ByteBufMessage extends BaseMessage {
         }
     }
 
+    /**
+     * 解码
+     *
+     * @param body
+     */
     public abstract void decode(ByteBuf body);
 
+    /**
+     * 编码
+     *
+     * @param body
+     */
     public abstract void encode(ByteBuf body);
 
     public void encodeString(ByteBuf body, String field) {
@@ -78,21 +88,30 @@ public abstract class ByteBufMessage extends BaseMessage {
         if (field == null || field.length == 0) {
             body.writeShort(0);
         } else if (field.length < Short.MAX_VALUE) {
-            body.writeShort(field.length).writeBytes(field);
+            body
+                    .writeShort(field.length)
+                    .writeBytes(field);
         } else {
-            body.writeShort(Short.MAX_VALUE).writeInt(field.length - Short.MAX_VALUE).writeBytes(field);
+            body
+                    .writeShort(Short.MAX_VALUE)
+                    .writeInt(field.length - Short.MAX_VALUE)
+                    .writeBytes(field);
         }
     }
 
     public String decodeString(ByteBuf body) {
         byte[] bytes = decodeBytes(body);
-        if (bytes == null) return null;
+        if (bytes == null) {
+            return null;
+        }
         return new String(bytes, Constants.UTF_8);
     }
 
     public byte[] decodeBytes(ByteBuf body) {
         int fieldLength = body.readShort();
-        if (fieldLength == 0) return null;
+        if (fieldLength == 0) {
+            return null;
+        }
         if (fieldLength == Short.MAX_VALUE) {
             fieldLength += body.readInt();
         }

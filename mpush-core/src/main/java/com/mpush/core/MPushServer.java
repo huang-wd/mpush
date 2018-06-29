@@ -20,14 +20,11 @@
 package com.mpush.core;
 
 import com.mpush.api.MPushContext;
-import com.mpush.api.common.Monitor;
 import com.mpush.api.spi.common.*;
 import com.mpush.api.srd.ServiceDiscovery;
 import com.mpush.api.srd.ServiceNode;
 import com.mpush.api.srd.ServiceRegistry;
 import com.mpush.common.ServerNodes;
-import com.mpush.common.user.UserManager;
-import com.mpush.core.ack.AckTaskQueue;
 import com.mpush.core.push.PushCenter;
 import com.mpush.core.router.RouterCenter;
 import com.mpush.core.server.*;
@@ -36,7 +33,7 @@ import com.mpush.monitor.service.MonitorService;
 import com.mpush.netty.http.HttpClient;
 import com.mpush.netty.http.NettyHttpClient;
 import com.mpush.tools.event.EventBus;
-import com.mpush.monitor.service.ThreadPoolManager;
+import lombok.Getter;
 
 import static com.mpush.tools.config.CC.mp.net.tcpGateway;
 
@@ -45,6 +42,7 @@ import static com.mpush.tools.config.CC.mp.net.tcpGateway;
  *
  * @author ohun@live.cn (夜色)
  */
+@Getter
 public final class MPushServer implements MPushContext {
 
     private ServiceNode connServerNode;
@@ -72,86 +70,19 @@ public final class MPushServer implements MPushContext {
         connServerNode = ServerNodes.cs();
         gatewayServerNode = ServerNodes.gs();
         websocketServerNode = ServerNodes.ws();
-
         monitorService = new MonitorService();
         EventBus.create(monitorService.getThreadPoolManager().getEventBusExecutor());
-
         reusableSessionManager = new ReusableSessionManager();
-
         pushCenter = new PushCenter(this);
-
         routerCenter = new RouterCenter(this);
-
         connectionServer = new ConnectionServer(this);
-
         websocketServer = new WebsocketServer(this);
-
         adminServer = new AdminServer(this);
-
         if (tcpGateway()) {
             gatewayServer = new GatewayServer(this);
         } else {
             udpGatewayServer = new GatewayUDPConnector(this);
         }
-    }
-
-    public boolean isTargetMachine(String host, int port) {
-        return port == gatewayServerNode.getPort() && gatewayServerNode.getHost().equals(host);
-    }
-
-    public ServiceNode getConnServerNode() {
-        return connServerNode;
-    }
-
-    public ServiceNode getGatewayServerNode() {
-        return gatewayServerNode;
-    }
-
-    public ServiceNode getWebsocketServerNode() {
-        return websocketServerNode;
-    }
-
-    public ConnectionServer getConnectionServer() {
-        return connectionServer;
-    }
-
-    public GatewayServer getGatewayServer() {
-        return gatewayServer;
-    }
-
-    public AdminServer getAdminServer() {
-        return adminServer;
-    }
-
-    public GatewayUDPConnector getUdpGatewayServer() {
-        return udpGatewayServer;
-    }
-
-    public WebsocketServer getWebsocketServer() {
-        return websocketServer;
-    }
-
-    public HttpClient getHttpClient() {
-        if (httpClient == null) {
-            synchronized (this) {
-                if (httpClient == null) {
-                    httpClient = new NettyHttpClient();
-                }
-            }
-        }
-        return httpClient;
-    }
-
-    public PushCenter getPushCenter() {
-        return pushCenter;
-    }
-
-    public ReusableSessionManager getReusableSessionManager() {
-        return reusableSessionManager;
-    }
-
-    public RouterCenter getRouterCenter() {
-        return routerCenter;
     }
 
     @Override
@@ -178,4 +109,20 @@ public final class MPushServer implements MPushContext {
     public MQClient getMQClient() {
         return MQClientFactory.create();
     }
+
+    public boolean isTargetMachine(String host, int port) {
+        return port == gatewayServerNode.getPort() && gatewayServerNode.getHost().equals(host);
+    }
+
+    public HttpClient getHttpClient() {
+        if (httpClient == null) {
+            synchronized (this) {
+                if (httpClient == null) {
+                    httpClient = new NettyHttpClient();
+                }
+            }
+        }
+        return httpClient;
+    }
+
 }

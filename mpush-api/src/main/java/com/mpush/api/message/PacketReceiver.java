@@ -23,10 +23,14 @@ import com.mpush.api.connection.Connection;
 import com.mpush.api.protocol.Packet;
 
 /**
- * Created by ohun on 2015/12/22.
- *
  * @author ohun@live.cn
  */
 public interface PacketReceiver {
+    /**
+     * 接收消息
+     *
+     * @param packet
+     * @param connection
+     */
     void onReceive(Packet packet, Connection connection);
 }

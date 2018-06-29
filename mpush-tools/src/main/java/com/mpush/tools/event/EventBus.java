@@ -33,11 +33,11 @@ import java.util.concurrent.Executor;
  */
 public class EventBus {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBus.class);
+
     private static com.google.common.eventbus.EventBus eventBus;
 
     public static void create(Executor executor) {
-        eventBus = new AsyncEventBus(executor, (exception, context)
-                -> LOGGER.error("event bus subscriber ex", exception));
+        eventBus = new AsyncEventBus(executor, (exception, context) -> LOGGER.error("event bus subscriber ex", exception));
     }
 
     public static void post(Event event) {

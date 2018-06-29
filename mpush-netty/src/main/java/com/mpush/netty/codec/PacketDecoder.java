@@ -30,7 +30,6 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.TooLongFrameException;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static com.mpush.api.protocol.Packet.decodePacket;
@@ -45,7 +44,7 @@ public final class PacketDecoder extends ByteToMessageDecoder {
     private static final int maxPacketSize = CC.mp.core.max_packet_size;
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         decodeHeartbeat(in, out);
         decodeFrames(in, out);
     }
@@ -96,12 +95,13 @@ public final class PacketDecoder extends ByteToMessageDecoder {
             return null;
         }
 
-        return decodePacket(new UDPPacket(in.readByte()
-                , frame.sender()), in, bodyLength);
+        return decodePacket(new UDPPacket(in.readByte(), frame.sender()), in, bodyLength);
     }
 
-    public static Packet decodeFrame(String frame) throws Exception {
-        if (frame == null) return null;
+    public static Packet decodeFrame(String frame) {
+        if (frame == null) {
+            return null;
+        }
         return Jsons.fromJson(frame, JsonPacket.class);
     }
 }

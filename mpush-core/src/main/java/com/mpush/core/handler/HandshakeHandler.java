@@ -90,7 +90,7 @@ public final class HandshakeHandler extends BaseMessageHandler<HandshakeMessage>
         }
 
         //3.更换会话密钥RSA=>AES(clientKey)
-        context.changeCipher(new AesCipher(clientKey, iv));
+        context.setCipher(new AesCipher(clientKey, iv));
 
         //4.生成可复用session, 用于快速重连
         ReusableSession session = reusableSessionManager.genSession(context);
@@ -108,7 +108,7 @@ public final class HandshakeHandler extends BaseMessageHandler<HandshakeMessage>
                 .send(f -> {
                             if (f.isSuccess()) {
                                 //7.更换会话密钥AES(clientKey)=>AES(sessionKey)
-                                context.changeCipher(new AesCipher(sessionKey, iv));
+                                context.setCipher(new AesCipher(sessionKey, iv));
                                 //8.保存client信息到当前连接
                                 context.setOsName(message.osName)
                                         .setOsVersion(message.osVersion)

@@ -56,7 +56,9 @@ public class Profiler {
      * @param message 第一个entry的信息
      */
     public static void start(String message, Object... args) {
-        if (enabled) entryStack.set(new Entry(String.format(message, args), null, null));
+        if (enabled) {
+            entryStack.set(new Entry(String.format(message, args), null, null));
+        }
     }
 
     /**
@@ -65,7 +67,9 @@ public class Profiler {
      * @param message 第一个entry的信息
      */
     public static void start(Message message) {
-        if (enabled) entryStack.set(new Entry(message, null, null));
+        if (enabled) {
+            entryStack.set(new Entry(message, null, null));
+        }
     }
 
     /**
@@ -227,8 +231,7 @@ public class Profiler {
             this.startTime = System.currentTimeMillis();
             this.parentEntry = parentEntry;
             this.firstEntry = firstEntry == null ? this : firstEntry;
-            this.baseTime = (firstEntry == null) ? 0
-                    : firstEntry.startTime;
+            this.baseTime = (firstEntry == null) ? 0 : firstEntry.startTime;
         }
 
         public String getMessage() {
@@ -260,8 +263,7 @@ public class Profiler {
          * @return 相对起始时间
          */
         public long getStartTime() {
-            return (baseTime > 0) ? (startTime - baseTime)
-                    : 0;
+            return (baseTime > 0) ? (startTime - baseTime) : 0;
         }
 
         /**
@@ -417,6 +419,7 @@ public class Profiler {
          *
          * @return 字符串表示的entry
          */
+        @Override
         public String toString() {
             return toString("", "");
         }

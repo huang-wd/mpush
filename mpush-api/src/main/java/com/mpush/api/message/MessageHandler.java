@@ -27,6 +27,12 @@ import com.mpush.api.protocol.Packet;
  *
  * @author ohun@live.cn
  */
-public interface MessageHandler {
+public interface  MessageHandler {
+    /**
+     * 处理消息
+     *
+     * @param packet
+     * @param connection
+     */
     void handle(Packet packet, Connection connection);
 }

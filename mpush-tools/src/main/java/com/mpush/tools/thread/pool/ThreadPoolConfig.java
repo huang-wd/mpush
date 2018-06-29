@@ -19,27 +19,52 @@
 
 package com.mpush.tools.thread.pool;
 
+import lombok.Getter;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
+/**
+ * 线程池配置信息
+ *
+ * @author
+ */
+@Getter
 public final class ThreadPoolConfig {
     public static final int REJECTED_POLICY_ABORT = 0;
     public static final int REJECTED_POLICY_DISCARD = 1;
     public static final int REJECTED_POLICY_CALLER_RUNS = 2;
-    private String name;//名字
-    private int corePoolSize; //最小线程大小
-    private int maxPoolSize; //最大线程大小
-    private int queueCapacity;  // 允许缓冲在队列中的任务数 (0:不缓冲、负数：无限大、正数：缓冲的任务数)
-    private int keepAliveSeconds;// 存活时间
+
+    /**
+     * 名字
+     */
+    private String name;
+
+    /**
+     * 最小线程大小
+     */
+    private int corePoolSize;
+
+    /**
+     * 最大线程大小
+     */
+    private int maxPoolSize;
+
+    /**
+     * 允许缓冲在队列中的任务数 (0:不缓冲、负数：无限大、正数：缓冲的任务数)
+     */
+    private int queueCapacity;
+
+    /**
+     * 存活时间
+     */
+    private int keepAliveSeconds;
+
     private int rejectedPolicy = REJECTED_POLICY_ABORT;
 
     public ThreadPoolConfig(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public ThreadPoolConfig setName(String name) {
@@ -47,17 +72,9 @@ public final class ThreadPoolConfig {
         return this;
     }
 
-    public int getCorePoolSize() {
-        return corePoolSize;
-    }
-
     public ThreadPoolConfig setCorePoolSize(int corePoolSize) {
         this.corePoolSize = corePoolSize;
         return this;
-    }
-
-    public int getMaxPoolSize() {
-        return maxPoolSize;
     }
 
     public ThreadPoolConfig setMaxPoolSize(int maxPoolSize) {
@@ -65,26 +82,14 @@ public final class ThreadPoolConfig {
         return this;
     }
 
-    public int getQueueCapacity() {
-        return queueCapacity;
-    }
-
     public ThreadPoolConfig setQueueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
         return this;
     }
 
-    public int getKeepAliveSeconds() {
-        return keepAliveSeconds;
-    }
-
     public ThreadPoolConfig setKeepAliveSeconds(long keepAliveSeconds) {
         this.keepAliveSeconds = (int) keepAliveSeconds;
         return this;
-    }
-
-    public int getRejectedPolicy() {
-        return rejectedPolicy;
     }
 
     public ThreadPoolConfig setRejectedPolicy(int rejectedPolicy) {
@@ -101,8 +106,7 @@ public final class ThreadPoolConfig {
     }
 
     public static ThreadPoolConfig buildCached(String name) {
-        return new ThreadPoolConfig(name)
-                .setKeepAliveSeconds(0);
+        return new ThreadPoolConfig(name).setKeepAliveSeconds(0);
     }
 
     public static ThreadPoolConfig build(String name) {

@@ -33,9 +33,11 @@ import java.util.function.Supplier;
  * @author ohun@live.cn
  */
 public final class BootChain {
+
     private final BootJob boot = new BootJob() {
         {
-            ServerEventListenerFactory.create();// 初始化服务监听
+            // 初始化服务监听
+            ServerEventListenerFactory.create();
         }
 
         @Override

@@ -33,7 +33,8 @@ public final class HeartBeatHandler implements MessageHandler {
 
     @Override
     public void handle(Packet packet, Connection connection) {
-        connection.send(packet);//ping -> pong
+        //ping -> pong
+        connection.send(packet);
         Logs.HB.info("ping -> pong, {}", connection);
     }
 }

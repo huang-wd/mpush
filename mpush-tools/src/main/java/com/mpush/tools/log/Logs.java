@@ -34,7 +34,10 @@ public interface Logs {
     boolean logInit = init();
 
     static boolean init() {
-        if (logInit) return true;
+        if (logInit) {
+            return true;
+        }
+
         System.setProperty("log.home", CC.mp.log_dir);
         System.setProperty("log.root.level", CC.mp.log_level);
         System.setProperty("logback.configurationFile", CC.mp.log_conf_path);

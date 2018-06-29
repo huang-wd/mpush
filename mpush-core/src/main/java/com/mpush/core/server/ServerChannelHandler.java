@@ -49,7 +49,10 @@ public final class ServerChannelHandler extends ChannelInboundHandlerAdapter {
 
     private static final long profile_slowly_limit = CC.mp.monitor.profile_slowly_duration.toMillis();
 
-    private final boolean security; //是否启用加密
+    /**
+     * 是否启用加密
+     */
+    private final boolean security;
     private final ConnectionManager connectionManager;
     private final PacketReceiver receiver;
 
@@ -60,7 +63,7 @@ public final class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Packet packet = (Packet) msg;
         byte cmd = packet.cmd;
 
@@ -80,7 +83,7 @@ public final class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         Connection connection = connectionManager.get(ctx.channel());
         Logs.CONN.error("client caught ex, conn={}", connection);
         LOGGER.error("caught an ex, channel={}, conn={}", ctx.channel(), connection, cause);

@@ -30,10 +30,21 @@ import io.netty.channel.ChannelFutureListener;
  */
 public interface Message {
 
+    /**
+     * 获取连接
+     *
+     * @return
+     */
     Connection getConnection();
 
+    /**
+     * 解码
+     */
     void decodeBody();
 
+    /**
+     * 编码
+     */
     void encodeBody();
 
     /**
@@ -50,5 +61,10 @@ public interface Message {
      */
     void sendRaw(ChannelFutureListener listener);
 
+    /**
+     * 获取消息体
+     *
+     * @return
+     */
     Packet getPacket();
 }

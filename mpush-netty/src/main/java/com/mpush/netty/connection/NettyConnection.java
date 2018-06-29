@@ -50,7 +50,7 @@ public final class NettyConnection implements Connection, ChannelFutureListener 
         this.lastReadTime = System.currentTimeMillis();
         this.status = STATUS_CONNECTED;
         if (security) {
-            this.context.changeCipher(RsaCipherFactory.create());
+            this.context.setCipher(RsaCipherFactory.create());
         }
     }
 
@@ -77,17 +77,15 @@ public final class NettyConnection implements Connection, ChannelFutureListener 
     @Override
     public ChannelFuture send(Packet packet, final ChannelFutureListener listener) {
         if (channel.isActive()) {
-
-            ChannelFuture future = channel.writeAndFlush(packet.toFrame(channel)).addListener(this);
-
+            ChannelFuture future = channel
+                    .writeAndFlush(packet.toFrame(channel))
+                    .addListener(this);
             if (listener != null) {
                 future.addListener(listener);
             }
-
             if (channel.isWritable()) {
                 return future;
             }
-
             //阻塞调用线程还是抛异常？
             //return channel.newPromise().setFailure(new RuntimeException("send data too busy"));
             if (!future.channel().eventLoop().inEventLoop()) {
@@ -106,7 +104,9 @@ public final class NettyConnection implements Connection, ChannelFutureListener 
 
     @Override
     public ChannelFuture close() {
-        if (status == STATUS_DISCONNECTED) return null;
+        if (status == STATUS_DISCONNECTED) {
+            return null;
+        }
         this.status = STATUS_DISCONNECTED;
         return this.channel.close();
     }
@@ -132,7 +132,7 @@ public final class NettyConnection implements Connection, ChannelFutureListener 
     }
 
     @Override
-    public void operationComplete(ChannelFuture future) throws Exception {
+    public void operationComplete(ChannelFuture future) {
         if (future.isSuccess()) {
             lastWriteTime = System.currentTimeMillis();
         } else {

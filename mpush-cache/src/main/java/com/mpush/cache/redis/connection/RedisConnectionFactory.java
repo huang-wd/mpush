@@ -15,17 +15,14 @@
  */
 package com.mpush.cache.redis.connection;
 
-import com.mpush.cache.redis.RedisServer;
 import com.mpush.tools.config.data.RedisNode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 import redis.clients.util.Pool;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +38,7 @@ public class RedisConnectionFactory {
 
     private final static Logger log = LoggerFactory.getLogger(RedisConnectionFactory.class);
 
-    private String hostName = "localhost";
+    private String hostName = Protocol.DEFAULT_HOST;
     private int port = Protocol.DEFAULT_PORT;
     private int timeout = Protocol.DEFAULT_TIMEOUT;
     private String password;
@@ -82,8 +79,9 @@ public class RedisConnectionFactory {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
+     *
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void init() {
@@ -144,12 +142,10 @@ public class RedisConnectionFactory {
      * @since 1.7
      */
     protected JedisCluster createCluster() {
-
         Set<HostAndPort> hostAndPorts = redisServers
                 .stream()
                 .map(redisNode -> new HostAndPort(redisNode.host, redisNode.port))
                 .collect(Collectors.toSet());
-
 
         if (StringUtils.isNotEmpty(getPassword())) {
             throw new IllegalArgumentException("Jedis does not support password protected Redis Cluster configurations!");
@@ -158,8 +154,9 @@ public class RedisConnectionFactory {
         return new JedisCluster(hostAndPorts, timeout, redirects, poolConfig);
     }
 
-    /*
+    /**
      * (non-Javadoc)
+     *
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     public void destroy() {
@@ -181,8 +178,9 @@ public class RedisConnectionFactory {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
+     *
      * @see org.springframework.data.redis.connection.RedisConnectionFactory#getConnection()
      */
     public Jedis getJedisConnection() {
@@ -193,8 +191,9 @@ public class RedisConnectionFactory {
         return jedis;
     }
 
-    /*
+    /**
      * (non-Javadoc)
+     *
      * @see org.springframework.data.redis.connection.RedisConnectionFactory#getClusterConnection()
      */
     public JedisCluster getClusterConnection() {

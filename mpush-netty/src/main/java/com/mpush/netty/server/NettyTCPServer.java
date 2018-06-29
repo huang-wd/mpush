@@ -73,6 +73,7 @@ public abstract class NettyTCPServer extends BaseService implements Server {
         this.host = host;
     }
 
+    @Override
     public void init() {
         if (!serverState.compareAndSet(State.Created, State.Initialized)) {
             throw new ServiceException("Server already init");
@@ -87,13 +88,21 @@ public abstract class NettyTCPServer extends BaseService implements Server {
     @Override
     public void stop(Listener listener) {
         if (!serverState.compareAndSet(State.Started, State.Shutdown)) {
-            if (listener != null) listener.onFailure(new ServiceException("server was already shutdown."));
+            if (listener != null) {
+                listener.onFailure(new ServiceException("server was already shutdown."));
+            }
             logger.error("{} was already shutdown.", this.getClass().getSimpleName());
             return;
         }
         logger.info("try shutdown {}...", this.getClass().getSimpleName());
-        if (bossGroup != null) bossGroup.shutdownGracefully().syncUninterruptibly();//要先关闭接收连接的main reactor
-        if (workerGroup != null) workerGroup.shutdownGracefully().syncUninterruptibly();//再关闭处理业务的sub reactor
+        //要先关闭接收连接的main reactor
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully().syncUninterruptibly();
+        }
+        //再关闭处理业务的sub reactor
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully().syncUninterruptibly();
+        }
         logger.info("{} shutdown success.", this.getClass().getSimpleName());
         if (listener != null) {
             listener.onSuccess(port);
@@ -112,20 +121,19 @@ public abstract class NettyTCPServer extends BaseService implements Server {
         }
     }
 
+    /***
+     * NioEventLoopGroup 是用来处理I/O操作的多线程事件循环器，
+     * Netty提供了许多不同的EventLoopGroup的实现用来处理不同传输协议。
+     * 在一个服务端的应用会有2个NioEventLoopGroup会被使用。
+     * 第一个经常被叫做‘boss’，用来接收进来的连接。
+     * 第二个经常被叫做‘worker’，用来处理已经被接收的连接，
+     * 一旦‘boss’接收到连接，就会把连接信息注册到‘worker’上。
+     * 如何知道多少个线程已经被使用，如何映射到已经创建的Channels上都需要依赖于EventLoopGroup的实现，
+     * 并且可以通过构造函数来配置他们的关系。
+     */
     private void createServer(Listener listener, EventLoopGroup boss, EventLoopGroup work, ChannelFactory<? extends ServerChannel> channelFactory) {
-        /***
-         * NioEventLoopGroup 是用来处理I/O操作的多线程事件循环器，
-         * Netty提供了许多不同的EventLoopGroup的实现用来处理不同传输协议。
-         * 在一个服务端的应用会有2个NioEventLoopGroup会被使用。
-         * 第一个经常被叫做‘boss’，用来接收进来的连接。
-         * 第二个经常被叫做‘worker’，用来处理已经被接收的连接，
-         * 一旦‘boss’接收到连接，就会把连接信息注册到‘worker’上。
-         * 如何知道多少个线程已经被使用，如何映射到已经创建的Channels上都需要依赖于EventLoopGroup的实现，
-         * 并且可以通过构造函数来配置他们的关系。
-         */
         this.bossGroup = boss;
         this.workerGroup = work;
-
         try {
             /**
              * ServerBootstrap 是一个启动NIO服务的辅助启动类
@@ -154,9 +162,10 @@ public abstract class NettyTCPServer extends BaseService implements Server {
              * 当你的程序变的复杂时，可能你会增加更多的处理类到pipeline上，
              * 然后提取这些匿名类到最顶层的类上。
              */
-            b.childHandler(new ChannelInitializer<Channel>() { // (4)
+            b.childHandler(new ChannelInitializer<Channel>() {
+                //每连上一个链接调用一次
                 @Override
-                public void initChannel(Channel ch) throws Exception {//每连上一个链接调用一次
+                public void initChannel(Channel ch) {
                     initPipeline(ch.pipeline());
                 }
             });
@@ -171,15 +180,21 @@ public abstract class NettyTCPServer extends BaseService implements Server {
                 if (future.isSuccess()) {
                     serverState.set(State.Started);
                     logger.info("server start success on:{}", port);
-                    if (listener != null) listener.onSuccess(port);
+                    if (listener != null) {
+                        listener.onSuccess(port);
+                    }
                 } else {
                     logger.error("server start failure on:{}", port, future.cause());
-                    if (listener != null) listener.onFailure(future.cause());
+                    if (listener != null) {
+                        listener.onFailure(future.cause());
+                    }
                 }
             });
         } catch (Exception e) {
             logger.error("server start exception", e);
-            if (listener != null) listener.onFailure(e);
+            if (listener != null) {
+                listener.onFailure(e);
+            }
             throw new ServiceException("server start exception, port=" + port, e);
         }
     }
@@ -229,7 +244,6 @@ public abstract class NettyTCPServer extends BaseService implements Server {
      */
     protected void initOptions(ServerBootstrap b) {
         //b.childOption(ChannelOption.SO_KEEPALIVE, false);// 使用应用层心跳
-
         /**
          * 在Netty 4中实现了一个新的ByteBuf内存池，它是一个纯Java版本的 jemalloc （Facebook也在用）。
          * 现在，Netty不会再因为用零填充缓冲区而浪费内存带宽了。不过，由于它不依赖于GC，开发人员需要小心内存泄漏。
@@ -248,7 +262,8 @@ public abstract class NettyTCPServer extends BaseService implements Server {
     }
 
     protected ChannelHandler getEncoder() {
-        return PacketEncoder.INSTANCE;//每连上一个链接调用一次, 所有用单利
+        //每连上一个链接调用一次, 所有用单例
+        return PacketEncoder.INSTANCE;
     }
 
     /**

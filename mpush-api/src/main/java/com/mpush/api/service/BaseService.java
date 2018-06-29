@@ -46,7 +46,8 @@ public abstract class BaseService implements Service {
             try {
                 init();
                 function.apply(listener);
-                listener.monitor(this);//主要用于异步，否则应该放置在function.apply(listener)之前
+                //主要用于异步，否则应该放置在function.apply(listener)之前
+                listener.monitor(this);
             } catch (Throwable e) {
                 listener.onFailure(e);
                 throw new ServiceException(e);
@@ -65,7 +66,8 @@ public abstract class BaseService implements Service {
         if (started.compareAndSet(true, false)) {
             try {
                 function.apply(listener);
-                listener.monitor(this);//主要用于异步，否则应该放置在function.apply(listener)之前
+                //主要用于异步，否则应该放置在function.apply(listener)之前
+                listener.monitor(this);
             } catch (Throwable e) {
                 listener.onFailure(e);
                 throw new ServiceException(e);

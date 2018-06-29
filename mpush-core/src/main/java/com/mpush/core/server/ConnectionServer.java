@@ -19,7 +19,6 @@
 
 package com.mpush.core.server;
 
-
 import com.mpush.api.connection.ConnectionManager;
 import com.mpush.api.protocol.Command;
 import com.mpush.api.service.Listener;
@@ -56,7 +55,6 @@ import static com.mpush.tools.thread.ThreadNames.T_TRAFFIC_SHAPING;
  * @author ohun@live.cn (夜色)
  */
 public final class ConnectionServer extends NettyTCPServer {
-
     private ServerChannelHandler channelHandler;
     private GlobalChannelTrafficShapingHandler trafficShapingHandler;
     private ScheduledExecutorService trafficShapingExecutor;
@@ -85,7 +83,8 @@ public final class ConnectionServer extends NettyTCPServer {
         messageDispatcher.register(Command.ACK, () -> new AckHandler(mPushServer));
         messageDispatcher.register(Command.HTTP_PROXY, () -> new HttpProxyHandler(mPushServer), CC.mp.http.proxy_enabled);
 
-        if (CC.mp.net.traffic_shaping.connect_server.enabled) {//启用流量整形，限流
+        //启用流量整形，限流
+        if (CC.mp.net.traffic_shaping.connect_server.enabled) {
             trafficShapingExecutor = Executors.newSingleThreadScheduledExecutor(new NamedPoolThreadFactory(T_TRAFFIC_SHAPING));
             trafficShapingHandler = new GlobalChannelTrafficShapingHandler(
                     trafficShapingExecutor,
@@ -98,7 +97,8 @@ public final class ConnectionServer extends NettyTCPServer {
     @Override
     public void start(Listener listener) {
         super.start(listener);
-        if (this.workerGroup != null) {// 增加线程池监控
+        // 增加线程池监控
+        if (this.workerGroup != null) {
             mPushServer.getMonitor().monitor("conn-worker", this.workerGroup);
         }
     }
@@ -139,16 +139,19 @@ public final class ConnectionServer extends NettyTCPServer {
     @Override
     protected void initOptions(ServerBootstrap b) {
         super.initOptions(b);
-
         b.option(ChannelOption.SO_BACKLOG, 1024);
-
         /**
          * TCP层面的接收和发送缓冲区大小设置，
          * 在Netty中分别对应ChannelOption的SO_SNDBUF和SO_RCVBUF，
          * 需要根据推送消息的大小，合理设置，对于海量长连接，通常32K是个不错的选择。
          */
-        if (snd_buf.connect_server > 0) b.childOption(ChannelOption.SO_SNDBUF, snd_buf.connect_server);
-        if (rcv_buf.connect_server > 0) b.childOption(ChannelOption.SO_RCVBUF, rcv_buf.connect_server);
+        if (snd_buf.connect_server > 0) {
+            b.childOption(ChannelOption.SO_SNDBUF, snd_buf.connect_server);
+        }
+
+        if (rcv_buf.connect_server > 0) {
+            b.childOption(ChannelOption.SO_RCVBUF, rcv_buf.connect_server);
+        }
 
         /**
          * 这个坑其实也不算坑，只是因为懒，该做的事情没做。一般来讲我们的业务如果比较小的时候我们用同步处理，等业务到一定规模的时候，一个优化手段就是异步化。
@@ -168,9 +171,9 @@ public final class ConnectionServer extends NettyTCPServer {
          * 当buffer的大小低于低水位线的时候，isWritable就会变成true。所以应用应该判断isWritable，如果是false就不要再写数据了。
          * 高水位线和低水位线是字节数，默认高水位是64K，低水位是32K，我们可以根据我们的应用需要支持多少连接数和系统资源进行合理规划。
          */
-        b.childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(
-                connect_server_low, connect_server_high
-        ));
+        b.childOption(ChannelOption.WRITE_BUFFER_WATER_MARK,
+                new WriteBufferWaterMark(connect_server_low, connect_server_high)
+        );
     }
 
     @Override

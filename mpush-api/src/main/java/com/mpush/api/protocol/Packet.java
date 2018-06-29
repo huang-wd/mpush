@@ -45,11 +45,31 @@ public class Packet {
     public static final byte[] HB_PACKET_BYTES = new byte[]{HB_PACKET_BYTE};
     public static final Packet HB_PACKET = new Packet(Command.HEARTBEAT);
 
-    public byte cmd; //命令
-    transient public short cc; //校验码 暂时没有用到
-    public byte flags; //特性，如是否加密，是否压缩等
-    public int sessionId; // 会话id。客户端生成。
-    transient public byte lrc; // 校验，纵向冗余校验。只校验head
+    /**
+     * 命令
+     */
+    public byte cmd;
+
+    /**
+     * 校验码 暂时没有用到
+     */
+    transient public short cc;
+
+    /**
+     * 特性，如是否加密，是否压缩等
+     */
+    public byte flags;
+
+    /**
+     * 会话id。客户端生成。
+     */
+    public int sessionId;
+
+    /**
+     * 校验，纵向冗余校验。只校验head
+     */
+    transient public byte lrc;
+
     transient public byte[] body;
 
     public Packet(byte cmd) {
@@ -139,10 +159,14 @@ public class Packet {
     }
 
     public static Packet decodePacket(Packet packet, ByteBuf in, int bodyLength) {
-        packet.cc = in.readShort();//read cc
-        packet.flags = in.readByte();//read flags
-        packet.sessionId = in.readInt();//read sessionId
-        packet.lrc = in.readByte();//read lrc
+        //read cc
+        packet.cc = in.readShort();
+        //read flags
+        packet.flags = in.readByte();
+        //read sessionId
+        packet.sessionId = in.readInt();
+        //read lrc
+        packet.lrc = in.readByte();
 
         //read body
         if (bodyLength > 0) {

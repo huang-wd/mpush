@@ -19,12 +19,12 @@
 
 package com.mpush.bootstrap;
 
-
 import com.mpush.api.common.ServerEventListener;
 import com.mpush.api.spi.core.ServerEventListenerFactory;
 import com.mpush.bootstrap.job.*;
 import com.mpush.core.MPushServer;
 import com.mpush.tools.config.CC;
+import lombok.Data;
 
 import static com.mpush.tools.config.CC.mp.net.*;
 
@@ -33,11 +33,13 @@ import static com.mpush.tools.config.CC.mp.net.*;
  *
  * @author ohun@live.cn
  */
+@Data
 public final class ServerLauncher {
+    private ServerEventListener serverEventListener;
 
     private MPushServer mPushServer;
+
     private BootChain chain;
-    private ServerEventListener serverEventListener;
 
     public void init() {
         if (mPushServer == null) {
@@ -55,18 +57,30 @@ public final class ServerLauncher {
         serverEventListener.init(mPushServer);
 
         chain.boot()
-                .setNext(new CacheManagerBoot())//1.初始化缓存模块
-                .setNext(new ServiceRegistryBoot())//2.启动服务注册与发现模块
-                .setNext(new ServiceDiscoveryBoot())//2.启动服务注册与发现模块
-                .setNext(new ServerBoot(mPushServer.getConnectionServer(), mPushServer.getConnServerNode()))//3.启动接入服务
-                .setNext(() -> new ServerBoot(mPushServer.getWebsocketServer(), mPushServer.getWebsocketServerNode()), wsEnabled())//4.启动websocket接入服务
-                .setNext(() -> new ServerBoot(mPushServer.getUdpGatewayServer(), mPushServer.getGatewayServerNode()), udpGateway())//5.启动udp网关服务
-                .setNext(() -> new ServerBoot(mPushServer.getGatewayServer(), mPushServer.getGatewayServerNode()), tcpGateway())//6.启动tcp网关服务
-                .setNext(new ServerBoot(mPushServer.getAdminServer(), null))//7.启动控制台服务
-                .setNext(new RouterCenterBoot(mPushServer))//8.启动路由中心组件
-                .setNext(new PushCenterBoot(mPushServer))//9.启动推送中心组件
-                .setNext(() -> new HttpProxyBoot(mPushServer), CC.mp.http.proxy_enabled)//10.启动http代理服务，dns解析服务
-                .setNext(new MonitorBoot(mPushServer))//11.启动监控服务
+                //1.初始化缓存模块
+                .setNext(new CacheManagerBoot())
+                //2.启动服务注册模块
+                .setNext(new ServiceRegistryBoot())
+                //2.启动服务发现模块
+                .setNext(new ServiceDiscoveryBoot())
+                //3.启动接入服务
+                .setNext(new ServerBoot(mPushServer.getConnectionServer(), mPushServer.getConnServerNode()))
+                //4.启动WebSocket接入服务
+                .setNext(() -> new ServerBoot(mPushServer.getWebsocketServer(), mPushServer.getWebsocketServerNode()), wsEnabled())
+                //5.启动udp网关服务
+                .setNext(() -> new ServerBoot(mPushServer.getUdpGatewayServer(), mPushServer.getGatewayServerNode()), udpGateway())
+                //6.启动tcp网关服务
+                .setNext(() -> new ServerBoot(mPushServer.getGatewayServer(), mPushServer.getGatewayServerNode()), tcpGateway())
+                //7.启动控制台服务
+                .setNext(new ServerBoot(mPushServer.getAdminServer(), null))
+                //8.启动路由中心组件
+                .setNext(new RouterCenterBoot(mPushServer))
+                //9.启动推送中心组件
+                .setNext(new PushCenterBoot(mPushServer))
+                //10.启动http代理服务,dns解析服务
+                .setNext(() -> new HttpProxyBoot(mPushServer), CC.mp.http.proxy_enabled)
+                //11.启动监控服务
+                .setNext(new MonitorBoot(mPushServer))
                 .end();
     }
 
@@ -76,29 +90,5 @@ public final class ServerLauncher {
 
     public void stop() {
         chain.stop();
-    }
-
-    public void setMPushServer(MPushServer mPushServer) {
-        this.mPushServer = mPushServer;
-    }
-
-    public void setChain(BootChain chain) {
-        this.chain = chain;
-    }
-
-    public MPushServer getMPushServer() {
-        return mPushServer;
-    }
-
-    public BootChain getChain() {
-        return chain;
-    }
-
-    public ServerEventListener getServerEventListener() {
-        return serverEventListener;
-    }
-
-    public void setServerEventListener(ServerEventListener serverEventListener) {
-        this.serverEventListener = serverEventListener;
     }
 }

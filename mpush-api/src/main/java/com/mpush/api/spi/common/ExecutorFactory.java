@@ -37,6 +37,11 @@ public interface ExecutorFactory {
 
     Executor get(String name);
 
+    /**
+     * 获取
+     *
+     * @return
+     */
     static ExecutorFactory create() {
         return SpiLoader.load(ExecutorFactory.class);
     }

@@ -56,7 +56,6 @@ public abstract class BaseMessage implements Message {
     public void decodeBody() {
         if ((status & STATUS_DECODED) == 0) {
             status |= STATUS_DECODED;
-
             if (packet.getBodyLength() > 0) {
                 if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
                     decodeJsonBody0();
@@ -64,7 +63,6 @@ public abstract class BaseMessage implements Message {
                     decodeBinaryBody0();
                 }
             }
-
         }
     }
 
@@ -72,14 +70,12 @@ public abstract class BaseMessage implements Message {
     public void encodeBody() {
         if ((status & STATUS_ENCODED) == 0) {
             status |= STATUS_ENCODED;
-
             if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
                 encodeJsonBody0();
             } else {
                 encodeBinaryBody0();
             }
         }
-
     }
 
     private void decodeBinaryBody0() {
@@ -103,7 +99,8 @@ public abstract class BaseMessage implements Message {
         Profiler.enter("time cost on [body decode]");
         decode(packet.body);
         Profiler.release();
-        packet.body = null;// 释放内存
+        //释放内存
+        packet.body = null;
     }
 
     private void encodeBinaryBody0() {
@@ -153,7 +150,6 @@ public abstract class BaseMessage implements Message {
     private void encodeBodyRaw() {
         if ((status & STATUS_ENCODED) == 0) {
             status |= STATUS_ENCODED;
-
             if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
                 encodeJsonBody0();
             } else {
@@ -241,6 +237,8 @@ public abstract class BaseMessage implements Message {
         return connection.getSessionContext().cipher;
     }
 
-    @Override
+    /**
+     * @return
+     */
     public abstract String toString();
 }

@@ -20,19 +20,27 @@ public class FutureListener extends CompletableFuture<Boolean> implements Listen
 
     @Override
     public void onSuccess(Object... args) {
-        if (isDone()) return;// 防止Listener被重复执行
+        // 防止Listener被重复执行
+        if (isDone()) {
+            return;
+        }
         complete(started.get());
-        if (listener != null) listener.onSuccess(args);
+        if (listener != null) {
+            listener.onSuccess(args);
+        }
     }
 
     @Override
     public void onFailure(Throwable cause) {
-        if (isDone()) return;// 防止Listener被重复执行
+        // 防止Listener被重复执行
+        if (isDone()) {
+            return;
+        }
         completeExceptionally(cause);
-        if (listener != null) listener.onFailure(cause);
-        throw cause instanceof ServiceException
-                ? (ServiceException) cause
-                : new ServiceException(cause);
+        if (listener != null) {
+            listener.onFailure(cause);
+        }
+        throw cause instanceof ServiceException ? (ServiceException) cause : new ServiceException(cause);
     }
 
     /**
@@ -41,7 +49,10 @@ public class FutureListener extends CompletableFuture<Boolean> implements Listen
      * @param service 服务
      */
     public void monitor(BaseService service) {
-        if (isDone()) return;// 防止Listener被重复执行
+        // 防止Listener被重复执行
+        if (isDone()) {
+            return;
+        }
         runAsync(() -> {
             try {
                 this.get(service.timeoutMillis(), TimeUnit.MILLISECONDS);

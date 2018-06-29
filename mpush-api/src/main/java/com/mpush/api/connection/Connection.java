@@ -25,7 +25,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
 /**
- * Created by ohun on 2015/12/22.
+ * 连接
  *
  * @author ohun@live.cn (夜色)
  */
@@ -34,20 +34,63 @@ public interface Connection {
     byte STATUS_CONNECTED = 1;
     byte STATUS_DISCONNECTED = 2;
 
+    /**
+     * 初始化
+     *
+     * @param channel
+     * @param security
+     */
     void init(Channel channel, boolean security);
 
+    /**
+     * session
+     *
+     * @return
+     */
     SessionContext getSessionContext();
 
+    /**
+     * 设置session
+     *
+     * @param context
+     */
     void setSessionContext(SessionContext context);
 
+    /**
+     * 发送消息
+     *
+     * @param packet
+     * @return
+     */
     ChannelFuture send(Packet packet);
 
+    /**
+     * 发送消息
+     *
+     * @param packet
+     * @param listener
+     * @return
+     */
     ChannelFuture send(Packet packet, ChannelFutureListener listener);
 
+    /**
+     * 获取连接ID
+     *
+     * @return
+     */
     String getId();
 
+    /**
+     * 关闭连接
+     *
+     * @return
+     */
     ChannelFuture close();
 
+    /**
+     *
+     * @return
+     */
     boolean isConnected();
 
     boolean isReadTimeout();

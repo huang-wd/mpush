@@ -33,16 +33,29 @@ import com.mpush.tools.common.Profiler;
  */
 public abstract class BaseMessageHandler<T extends BaseMessage> implements MessageHandler {
 
-
-
+    /**
+     * 解码
+     *
+     * @param packet
+     * @param connection
+     * @return
+     */
     public abstract T decode(Packet packet, Connection connection);
 
+    /**
+     * 处理
+     *
+     * @param message
+     */
     public abstract void handle(T message);
 
+    @Override
     public void handle(Packet packet, Connection connection) {
         Profiler.enter("time cost on [message decode]");
         T t = decode(packet, connection);
-        if (t != null) t.decodeBody();
+        if (t != null) {
+            t.decodeBody();
+        }
         Profiler.release();
 
         if (t != null) {

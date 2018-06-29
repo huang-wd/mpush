@@ -19,10 +19,8 @@
 
 package com.mpush.netty.codec;
 
-import com.mpush.api.protocol.Command;
 import com.mpush.api.protocol.Packet;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -40,7 +38,7 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
     public static final PacketEncoder INSTANCE = new PacketEncoder();
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) {
         encodePacket(packet, out);
     }
 }

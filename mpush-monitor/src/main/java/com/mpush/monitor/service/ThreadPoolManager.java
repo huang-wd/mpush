@@ -49,18 +49,15 @@ public final class ThreadPoolManager {
     }
 
     public ScheduledExecutorService getPushClientTimer() {
-        return (ScheduledExecutorService) pools.computeIfAbsent("push-client-timer"
-                , s -> executorFactory.get(ExecutorFactory.PUSH_CLIENT));
+        return (ScheduledExecutorService) pools.computeIfAbsent("push-client-timer", s -> executorFactory.get(ExecutorFactory.PUSH_CLIENT));
     }
 
     public ScheduledExecutorService getPushTaskTimer() {
-        return (ScheduledExecutorService) pools.computeIfAbsent("push-task-timer"
-                , s -> executorFactory.get(ExecutorFactory.PUSH_TASK));
+        return (ScheduledExecutorService) pools.computeIfAbsent("push-task-timer", s -> executorFactory.get(ExecutorFactory.PUSH_TASK));
     }
 
     public ScheduledExecutorService getAckTimer() {
-        return (ScheduledExecutorService) pools.computeIfAbsent("ack-timer"
-                , s -> executorFactory.get(ExecutorFactory.ACK_TIMER));
+        return (ScheduledExecutorService) pools.computeIfAbsent("ack-timer", s -> executorFactory.get(ExecutorFactory.ACK_TIMER));
     }
 
     public void register(String name, Executor executor) {

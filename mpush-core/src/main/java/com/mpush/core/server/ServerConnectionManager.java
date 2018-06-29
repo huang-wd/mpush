@@ -19,7 +19,6 @@
 
 package com.mpush.core.server;
 
-
 import com.mpush.api.connection.Connection;
 import com.mpush.api.connection.ConnectionManager;
 import com.mpush.netty.connection.NettyConnection;
@@ -36,7 +35,6 @@ import io.netty.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * Created by ohun on 2015/12/22.
@@ -58,7 +56,8 @@ public final class ServerConnectionManager implements ConnectionManager {
     @Override
     public void init() {
         if (heartbeatCheck) {
-            long tickDuration = TimeUnit.SECONDS.toMillis(1);//1s 每秒钟走一步，一个心跳周期内大致走一圈
+            //1s 每秒钟走一步，一个心跳周期内大致走一圈
+            long tickDuration = TimeUnit.SECONDS.toMillis(1);
             int ticksPerWheel = (int) (CC.mp.core.max_heartbeat / tickDuration);
             this.timer = new HashedWheelTimer(
                     new NamedThreadFactory(ThreadNames.T_CONN_TIMER),
@@ -135,7 +134,6 @@ public final class ServerConnectionManager implements ConnectionManager {
 
 
     private class HeartbeatCheckTask implements ConnectionHolder, TimerTask {
-
         private byte timeoutTimes = 0;
         private Connection connection;
 
@@ -146,7 +144,6 @@ public final class ServerConnectionManager implements ConnectionManager {
 
         void startTimeout() {
             Connection connection = this.connection;
-
             if (connection != null && connection.isConnected()) {
                 int timeout = connection.getSessionContext().heartbeat;
                 timer.newTimeout(this, timeout, TimeUnit.MILLISECONDS);
@@ -154,14 +151,12 @@ public final class ServerConnectionManager implements ConnectionManager {
         }
 
         @Override
-        public void run(Timeout timeout) throws Exception {
+        public void run(Timeout timeout) {
             Connection connection = this.connection;
-
             if (connection == null || !connection.isConnected()) {
                 Logs.HB.info("heartbeat timeout times={}, connection disconnected, conn={}", timeoutTimes, connection);
                 return;
             }
-
             if (connection.isReadTimeout()) {
                 if (++timeoutTimes > CC.mp.core.max_hb_timeout_times) {
                     connection.close();
