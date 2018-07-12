@@ -28,6 +28,11 @@ import com.mpush.api.spi.SpiLoader;
  * @author ohun@live.cn (夜色)
  */
 public interface CacheManagerFactory extends Factory<CacheManager> {
+    /**
+     * get cacheManager
+     *
+     * @return
+     */
     static CacheManager create() {
         return SpiLoader.load(CacheManagerFactory.class).get();
     }

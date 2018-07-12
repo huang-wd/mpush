@@ -34,8 +34,6 @@ import com.mpush.core.session.ReusableSession;
 import com.mpush.core.session.ReusableSessionManager;
 import com.mpush.tools.config.ConfigTools;
 import com.mpush.tools.log.Logs;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 
 import static com.mpush.common.ErrorCode.REPEAT_HANDSHAKE;
 
@@ -67,10 +65,14 @@ public final class HandshakeHandler extends BaseMessageHandler<HandshakeMessage>
     }
 
     private void doSecurity(HandshakeMessage message) {
-        byte[] iv = message.iv;//AES密钥向量16位
-        byte[] clientKey = message.clientKey;//客户端随机数16位
-        byte[] serverKey = CipherBox.I.randomAESKey();//服务端随机数16位
-        byte[] sessionKey = CipherBox.I.mixKey(clientKey, serverKey);//会话密钥16位
+        //AES密钥向量16位
+        byte[] iv = message.iv;
+        //客户端随机数16位
+        byte[] clientKey = message.clientKey;
+        //服务端随机数16位
+        byte[] serverKey = CipherBox.I.randomAESKey();
+        //会话密钥16位
+        byte[] sessionKey = CipherBox.I.mixKey(clientKey, serverKey);
 
         //1.校验客户端消息字段
         if (Strings.isNullOrEmpty(message.deviceId)

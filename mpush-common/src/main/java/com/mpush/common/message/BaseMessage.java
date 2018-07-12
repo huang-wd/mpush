@@ -40,11 +40,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author ohun@live.cn
  */
 public abstract class BaseMessage implements Message {
+    private static final AtomicInteger ID_SEQ = new AtomicInteger();
     private static final byte STATUS_DECODED = 1;
     private static final byte STATUS_ENCODED = 2;
-    private static final AtomicInteger ID_SEQ = new AtomicInteger();
-    transient protected Packet packet;
     transient protected Connection connection;
+    transient protected Packet packet;
     transient private byte status = 0;
 
     public BaseMessage(Packet packet, Connection connection) {

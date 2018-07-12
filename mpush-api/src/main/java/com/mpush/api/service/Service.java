@@ -22,26 +22,62 @@ package com.mpush.api.service;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Created by yxx on 2016/5/17.
- *
  * @author ohun@live.cn
  */
 public interface Service {
 
+    /**
+     * 启动
+     *
+     * @param listener
+     */
     void start(Listener listener);
 
+    /**
+     * 停止
+     *
+     * @param listener
+     */
     void stop(Listener listener);
 
+    /**
+     * 启动
+     *
+     * @return
+     */
     CompletableFuture<Boolean> start();
 
+    /**
+     * 停止
+     *
+     * @return
+     */
     CompletableFuture<Boolean> stop();
 
+    /**
+     * 同步启动
+     *
+     * @return
+     */
     boolean syncStart();
 
+    /**
+     * 同步停止
+     *
+     * @return
+     */
     boolean syncStop();
 
+    /**
+     * 初始化
+     */
     void init();
 
+    /**
+     * 是否启动
+     *
+     * @return
+     */
     boolean isRunning();
 
 }

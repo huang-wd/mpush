@@ -23,6 +23,8 @@ import com.mpush.api.connection.Connection;
 import com.mpush.api.protocol.Packet;
 
 /**
+ * 主要负责消息的分发，分发是根据Command来的
+ *
  * @author ohun@live.cn
  */
 public interface PacketReceiver {

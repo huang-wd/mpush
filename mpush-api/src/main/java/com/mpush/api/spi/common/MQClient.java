@@ -28,7 +28,16 @@ import com.mpush.api.spi.Plugin;
  */
 public interface MQClient extends Plugin {
 
+    /**
+     * 订阅
+     */
     void subscribe(String topic, MQMessageReceiver receiver);
 
+    /**
+     * 发布
+     *
+     * @param topic
+     * @param message
+     */
     void publish(String topic, Object message);
 }

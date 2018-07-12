@@ -26,6 +26,11 @@ package com.mpush.api.srd;
  */
 public interface ServiceListener {
 
+    /**
+     * 添加时
+     * @param path
+     * @param node
+     */
     void onServiceAdded(String path, ServiceNode node);
 
     void onServiceUpdated(String path, ServiceNode node);

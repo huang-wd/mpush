@@ -20,10 +20,16 @@
 package com.mpush.api.spi.common;
 
 /**
- * Created by ohun on 2016/12/27.
+ * 接收消息
  *
  * @author ohun@live.cn (夜色)
  */
 public interface MQMessageReceiver {
+    /**
+     * 接收
+     *
+     * @param topic
+     * @param message
+     */
     void receive(String topic, Object message);
 }

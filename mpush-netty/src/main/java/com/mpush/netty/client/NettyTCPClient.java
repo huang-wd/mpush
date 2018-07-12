@@ -41,26 +41,34 @@ import java.nio.channels.spi.SelectorProvider;
 
 import static com.mpush.tools.Utils.useNettyEpoll;
 
+/**
+ * netty client基类
+ */
 public abstract class NettyTCPClient extends BaseService implements Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyTCPClient.class);
 
     private EventLoopGroup workerGroup;
+
     protected Bootstrap bootstrap;
 
     private void createClient(Listener listener, EventLoopGroup workerGroup, ChannelFactory<? extends Channel> channelFactory) {
         this.workerGroup = workerGroup;
         this.bootstrap = new Bootstrap();
-        bootstrap.group(workerGroup)//
-                .option(ChannelOption.SO_REUSEADDR, true)//
-                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)//
+
+        bootstrap.group(workerGroup)
+                .option(ChannelOption.SO_REUSEADDR, true)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .channelFactory(channelFactory);
-        bootstrap.handler(new ChannelInitializer<Channel>() { // (4)
+
+        bootstrap.handler(new ChannelInitializer<Channel>() {
             @Override
-            public void initChannel(Channel ch) throws Exception {
+            public void initChannel(Channel ch) {
                 initPipeline(ch.pipeline());
             }
         });
+
         initOptions(bootstrap);
+
         listener.onSuccess();
     }
 
@@ -71,10 +79,14 @@ public abstract class NettyTCPClient extends BaseService implements Client {
     public ChannelFuture connect(String host, int port, Listener listener) {
         return bootstrap.connect(new InetSocketAddress(host, port)).addListener(f -> {
             if (f.isSuccess()) {
-                if (listener != null) listener.onSuccess(port);
+                if (listener != null) {
+                    listener.onSuccess(port);
+                }
                 LOGGER.info("start netty client success, host={}, port={}", host, port);
             } else {
-                if (listener != null) listener.onFailure(f.cause());
+                if (listener != null) {
+                    listener.onFailure(f.cause());
+                }
                 LOGGER.error("start netty client failure, host={}, port={}", host, port, f.cause());
             }
         });
@@ -82,15 +94,19 @@ public abstract class NettyTCPClient extends BaseService implements Client {
 
     private void createNioClient(Listener listener) {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(
-                getWorkThreadNum(), new DefaultThreadFactory(ThreadNames.T_TCP_CLIENT), getSelectorProvider()
+                getWorkThreadNum(),
+                new DefaultThreadFactory(ThreadNames.T_TCP_CLIENT),
+                getSelectorProvider()
         );
+
         workerGroup.setIoRatio(getIoRate());
         createClient(listener, workerGroup, getChannelFactory());
     }
 
     private void createEpollClient(Listener listener) {
         EpollEventLoopGroup workerGroup = new EpollEventLoopGroup(
-                getWorkThreadNum(), new DefaultThreadFactory(ThreadNames.T_TCP_CLIENT)
+                getWorkThreadNum(),
+                new DefaultThreadFactory(ThreadNames.T_TCP_CLIENT)
         );
         workerGroup.setIoRatio(getIoRate());
         createClient(listener, workerGroup, EpollSocketChannel::new);
@@ -121,7 +137,7 @@ public abstract class NettyTCPClient extends BaseService implements Client {
     public abstract ChannelHandler getChannelHandler();
 
     @Override
-    protected void doStart(Listener listener) throws Throwable {
+    protected void doStart(Listener listener) {
         if (useNettyEpoll()) {
             createEpollClient(listener);
         } else {

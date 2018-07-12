@@ -24,7 +24,9 @@ import com.mpush.api.protocol.Packet;
 import io.netty.channel.ChannelFutureListener;
 
 /**
- * Created by ohun on 2015/12/22.
+ * 部分是整个的业务核心处理了处理消息的序列化，还有压缩、加密等，
+ * MessageHandler会根据不同消息独立处理自己所属的业务，
+ * 主要有：心跳响应、握手及密钥交换、快速重连、绑定/解绑用户、http代理、消息推送等
  *
  * @author ohun@live.cn
  */
@@ -48,7 +50,7 @@ public interface Message {
     void encodeBody();
 
     /**
-     * 发送当前message, 并根据情况最body进行数据压缩、加密
+     * 发送当前message, 并根据情况对body进行数据压缩、加密
      *
      * @param listener 发送成功后的回调
      */

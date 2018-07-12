@@ -27,7 +27,21 @@ package com.mpush.api.spi.common;
 public interface Json {
     Json JSON = JsonFactory.create();
 
+    /**
+     * json字符串 转 对象
+     *
+     * @param json
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     <T> T fromJson(String json, Class<T> clazz);
 
+    /**
+     * 转化为json字符串
+     *
+     * @param json
+     * @return
+     */
     String toJson(Object json);
 }

@@ -54,6 +54,7 @@ public final class PacketDecoder extends ByteToMessageDecoder {
             if (in.readByte() == Packet.HB_PACKET_BYTE) {
                 out.add(Packet.HB_PACKET);
             } else {
+                //如果不是心跳，readerIndex重置
                 in.readerIndex(in.readerIndex() - 1);
                 break;
             }

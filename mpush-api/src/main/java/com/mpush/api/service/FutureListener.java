@@ -4,6 +4,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * listener包装类，防止重复回调
+ */
 public class FutureListener extends CompletableFuture<Boolean> implements Listener {
     private final Listener listener;
     private final AtomicBoolean started;

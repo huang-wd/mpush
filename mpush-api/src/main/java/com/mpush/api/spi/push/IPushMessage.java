@@ -27,19 +27,53 @@ import com.mpush.api.common.Condition;
  * @author ohun@live.cn (夜色)
  */
 public interface IPushMessage {
-
+    /**
+     * 是否是广播消息
+     *
+     * @return
+     */
     boolean isBroadcast();
 
+    /**
+     * 获取用户ID
+     *
+     * @return
+     */
     String getUserId();
 
+    /**
+     * 获取客户端类型
+     *
+     * @return
+     */
     int getClientType();
 
+    /**
+     * 消息体
+     *
+     * @return
+     */
     byte[] getContent();
 
+    /**
+     * 是否需要响应
+     *
+     * @return
+     */
     boolean isNeedAck();
 
+    /**
+     * 获取标记
+     *
+     * @return
+     */
     byte getFlags();
 
+    /**
+     * 超时时间
+     *
+     * @return
+     */
     int getTimeoutMills();
 
     default String getTaskId() {

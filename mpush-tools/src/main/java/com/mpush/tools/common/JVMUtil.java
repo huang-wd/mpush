@@ -60,15 +60,13 @@ public class JVMUtil {
             long cpuTimeMillis = cpuTimeEnabled ? threadMXBean.getThreadCpuTime(tid) / 1000000 : -1;
             long userTimeMillis = cpuTimeEnabled ? threadMXBean.getThreadUserTime(tid) / 1000000 : -1;
 
-            out.printf("%s id=%d state=%s deamon=%s priority=%s cpu[total=%sms,user=%sms]", t.getName(),
-                    tid, t.getState(), t.isDaemon(), t.getPriority(), cpuTimeMillis, userTimeMillis);
+            out.printf("%s id=%d state=%s deamon=%s priority=%s cpu[total=%sms,user=%sms]", t.getName(), tid, t.getState(), t.isDaemon(), t.getPriority(), cpuTimeMillis, userTimeMillis);
             final LockInfo lock = tt.getLockInfo();
             if (lock != null && state != Thread.State.BLOCKED) {
                 out.printf("%n    - waiting on <0x%08x> (a %s)", lock.getIdentityHashCode(), lock.getClassName());
                 out.printf("%n    - locked <0x%08x> (a %s)", lock.getIdentityHashCode(), lock.getClassName());
             } else if (lock != null && state == Thread.State.BLOCKED) {
-                out.printf("%n    - waiting to lock <0x%08x> (a %s)", lock.getIdentityHashCode(),
-                        lock.getClassName());
+                out.printf("%n    - waiting to lock <0x%08x> (a %s)", lock.getIdentityHashCode(), lock.getClassName());
             }
 
             if (tt.isSuspended()) {

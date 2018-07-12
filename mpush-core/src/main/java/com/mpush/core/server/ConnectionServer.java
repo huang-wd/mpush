@@ -50,7 +50,7 @@ import static com.mpush.tools.config.CC.mp.net.write_buffer_water_mark.connect_s
 import static com.mpush.tools.thread.ThreadNames.T_TRAFFIC_SHAPING;
 
 /**
- * Created by ohun on 2015/12/30.
+ * 用于维持和客户端之间的TCP通道，主要负责和客户端交互
  *
  * @author ohun@live.cn (夜色)
  */

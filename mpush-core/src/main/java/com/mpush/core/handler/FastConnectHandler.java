@@ -62,13 +62,11 @@ public final class FastConnectHandler extends BaseMessageHandler<FastConnectMess
         if (session == null) {
             //1.没查到说明session已经失效了
             ErrorMessage.from(message).setErrorCode(SESSION_EXPIRED).send();
-            Logs.CONN.warn("fast connect failure, session is expired, sessionId={}, deviceId={}, conn={}"
-                    , message.sessionId, message.deviceId, message.getConnection().getChannel());
+            Logs.CONN.warn("fast connect failure, session is expired, sessionId={}, deviceId={}, conn={}", message.sessionId, message.deviceId, message.getConnection().getChannel());
         } else if (!session.context.deviceId.equals(message.deviceId)) {
             //2.非法的设备, 当前设备不是上次生成session时的设备
             ErrorMessage.from(message).setErrorCode(INVALID_DEVICE).send();
-            Logs.CONN.warn("fast connect failure, not the same device, deviceId={}, session={}, conn={}"
-                    , message.deviceId, session.context, message.getConnection().getChannel());
+            Logs.CONN.warn("fast connect failure, not the same device, deviceId={}, session={}, conn={}", message.deviceId, session.context, message.getConnection().getChannel());
         } else {
             //3.校验成功，重新计算心跳，完成快速重连
             int heartbeat = ConfigTools.getHeartbeat(message.minHeartbeat, message.maxHeartbeat);
@@ -87,7 +85,6 @@ public final class FastConnectHandler extends BaseMessageHandler<FastConnectMess
                             Logs.CONN.info("fast connect failure, session={}, conn={}", session.context, message.getConnection().getChannel());
                         }
                     });
-
             Profiler.release();
         }
     }

@@ -51,7 +51,9 @@ public final class AckTaskQueue extends BaseService {
     public void add(AckTask task, int timeout) {
         queue.put(task.getAckMessageId(), task);
         task.setAckTaskQueue(this);
-        task.setFuture(scheduledExecutor.schedule(task,//使用 task.getExecutor() 并没更快
+        //使用 task.getExecutor() 并没更快
+        task.setFuture(scheduledExecutor.schedule(
+                task,
                 timeout > 0 ? timeout : DEFAULT_TIMEOUT,
                 TimeUnit.MILLISECONDS
         ));

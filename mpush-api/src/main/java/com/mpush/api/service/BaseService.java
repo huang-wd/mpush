@@ -81,12 +81,14 @@ public abstract class BaseService implements Service {
         }
     }
 
+    @Override
     public final CompletableFuture<Boolean> start() {
         FutureListener listener = new FutureListener(started);
         start(listener);
         return listener;
     }
 
+    @Override
     public final CompletableFuture<Boolean> stop() {
         FutureListener listener = new FutureListener(started);
         stop(listener);
@@ -106,6 +108,7 @@ public abstract class BaseService implements Service {
     @Override
     public void start(Listener listener) {
         tryStart(listener, this::doStart);
+        //tryStart(listener, l -> doStart(listener));
     }
 
     @Override
@@ -161,8 +164,14 @@ public abstract class BaseService implements Service {
      * @return FutureListener
      */
     public FutureListener wrap(Listener l) {
-        if (l == null) return new FutureListener(started);
-        if (l instanceof FutureListener) return (FutureListener) l;
+        if (l == null) {
+            return new FutureListener(started);
+        }
+
+        if (l instanceof FutureListener) {
+            return (FutureListener) l;
+        }
+
         return new FutureListener(l, started);
     }
 }

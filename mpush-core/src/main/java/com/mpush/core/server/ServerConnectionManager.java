@@ -44,8 +44,8 @@ import java.util.concurrent.TimeUnit;
 public final class ServerConnectionManager implements ConnectionManager {
     private final ConcurrentMap<ChannelId, ConnectionHolder> connections = new ConcurrentHashMap<>();
     private final ConnectionHolder DEFAULT = new SimpleConnectionHolder(null);
-    private final boolean heartbeatCheck;
     private final ConnectionHolderFactory holderFactory;
+    private final boolean heartbeatCheck;
     private HashedWheelTimer timer;
 
     public ServerConnectionManager(boolean heartbeatCheck) {

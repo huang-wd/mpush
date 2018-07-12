@@ -28,13 +28,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author ohun@live.cn (夜色)
  */
 public final class GlobalFlowControl implements FlowControl {
-    private final int limit;
-    private final int maxLimit;
-    private final long duration;
     private final AtomicInteger count = new AtomicInteger();
     private final AtomicInteger total = new AtomicInteger();
     private final long start0 = System.nanoTime();
+    private final int maxLimit;
+    private final long duration;
     private volatile long start;
+    private final int limit;
 
     public GlobalFlowControl(int qps) {
         this(qps, Integer.MAX_VALUE, 1000);

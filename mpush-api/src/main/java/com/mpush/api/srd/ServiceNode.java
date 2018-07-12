@@ -20,7 +20,7 @@
 package com.mpush.api.srd;
 
 /**
- * Created by ohun on 2016/12/19.
+ * 服务器节点
  *
  * @author ohun@live.cn (夜色)
  */

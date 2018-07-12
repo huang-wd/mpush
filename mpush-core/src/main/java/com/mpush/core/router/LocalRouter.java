@@ -50,11 +50,13 @@ public final class LocalRouter implements Router<Connection> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LocalRouter that = (LocalRouter) o;
-
         return getClientType() == that.getClientType();
 
     }

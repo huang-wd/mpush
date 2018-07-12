@@ -66,7 +66,6 @@ public final class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Packet packet = (Packet) msg;
         byte cmd = packet.cmd;
-
         try {
             Profiler.start("time cost on [channel read]: ", packet.toString());
             Connection connection = connectionManager.get(ctx.channel());
@@ -91,15 +90,20 @@ public final class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         Logs.CONN.info("client connected conn={}", ctx.channel());
         Connection connection = new NettyConnection();
         connection.init(ctx.channel(), security);
         connectionManager.add(connection);
     }
 
+    /**
+     * channelInactive 是关闭成功后收到通知的事件
+     *
+     * @param ctx
+     */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         Connection connection = connectionManager.removeAndClose(ctx.channel());
         EventBus.post(new ConnectionCloseEvent(connection));
         Logs.CONN.info("client disconnected conn={}", connection);

@@ -87,7 +87,9 @@ public class ZKClient extends BaseService {
 
     @Override
     protected void doStop(Listener listener) throws Throwable {
-        if (cache != null) cache.close();
+        if (cache != null) {
+            cache.close();
+        }
         TimeUnit.MILLISECONDS.sleep(600);
         client.close();
         Logs.RSD.info("zk client closed...");
@@ -99,7 +101,9 @@ public class ZKClient extends BaseService {
      */
     @Override
     public void init() {
-        if (client != null) return;
+        if (client != null) {
+            return;
+        }
         if (zkConfig == null) {
             zkConfig = ZKConfig.build();
         }
@@ -144,7 +148,9 @@ public class ZKClient extends BaseService {
         Logs.RSD.info("init zk client, config={}", zkConfig.toString());
     }
 
-    // 注册连接状态监听器
+    /**
+     * 注册连接状态监听器
+     */
     private void addConnectionStateListener() {
         client.getConnectionStateListenable().addListener((cli, newState) -> {
             if (newState == ConnectionState.RECONNECTED) {
@@ -155,7 +161,9 @@ public class ZKClient extends BaseService {
         });
     }
 
-    // 本地缓存
+    /**
+     * 本地缓存
+     */
     private void initLocalCache(String watchRootPath) throws Exception {
         cache = new TreeCache(client, watchRootPath);
         cache.start();

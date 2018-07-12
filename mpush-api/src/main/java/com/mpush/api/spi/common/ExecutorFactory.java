@@ -35,10 +35,16 @@ public interface ExecutorFactory {
     String EVENT_BUS = "event-bus";
     String MQ = "mq";
 
+    /**
+     * get by name
+     *
+     * @param name
+     * @return
+     */
     Executor get(String name);
 
     /**
-     * 获取
+     * 获取ExecutorFactory
      *
      * @return
      */

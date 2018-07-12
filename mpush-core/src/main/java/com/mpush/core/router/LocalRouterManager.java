@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ohun on 2015/12/23.
+ * 负责维护用户＋设备与链接(connection)之间的关系
  *
  * @author ohun@live.cn
  */

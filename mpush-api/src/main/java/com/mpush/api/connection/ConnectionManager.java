@@ -21,24 +21,50 @@ package com.mpush.api.connection;
 
 import io.netty.channel.Channel;
 
-import java.util.List;
-
 /**
- * Created by ohun on 2015/12/30.
+ * Connection/ConnectionManager主要负责链接管理，定时检查链接空闲情况，是否读写超时，如果链接断开发出相应的事件给路由中心去处理
  *
  * @author ohun@live.cn (夜色)
  */
 public interface ConnectionManager {
 
+    /**
+     * 获取connection
+     *
+     * @param channel
+     * @return
+     */
     Connection get(Channel channel);
 
+    /**
+     * 关闭
+     *
+     * @param channel
+     * @return
+     */
     Connection removeAndClose(Channel channel);
 
+    /**
+     * 添加连接
+     *
+     * @param connection
+     */
     void add(Connection connection);
 
+    /**
+     * 获取连接总数
+     *
+     * @return
+     */
     int getConnNum();
 
+    /**
+     * 初始化
+     */
     void init();
 
+    /**
+     * 销毁
+     */
     void destroy();
 }

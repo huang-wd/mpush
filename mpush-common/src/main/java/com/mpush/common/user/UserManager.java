@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 主要处理用户上下线事件的广播，以及单台机器的在线用户及数量的维护和查询
+ * <p>
  * 在线列表是存在redis里的，服务被kill -9的时候，无法修改redis。
  * 查询全部在线列表的时候，要通过当前ZK里可用的机器来循环查询。
  * 每台机器的在线列表是分开存的，如果都存储在一起，某台机器挂了，反而不好处理。
@@ -57,6 +59,11 @@ public final class UserManager {
         this.remoteRouterManager = remoteRouterManager;
     }
 
+    /**
+     * 踢人
+     *
+     * @param userId
+     */
     public void kickUser(String userId) {
         kickUser(userId, -1);
     }

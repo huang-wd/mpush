@@ -61,7 +61,9 @@ public final class BroadcastPushTask implements PushTask {
 
     private final MPushServer mPushServer;
 
-    //使用Iterator, 记录任务遍历到的位置，因为有流控，一次任务可能会被分批发送，而且还有在推送过程中上/下线的用户
+    /**
+     * 使用Iterator, 记录任务遍历到的位置，因为有流控，一次任务可能会被分批发送，而且还有在推送过程中上/下线的用户
+     */
     private final Iterator<Map.Entry<String, Map<Integer, LocalRouter>>> iterator;
 
     public BroadcastPushTask(MPushServer mPushServer, IPushMessage message, FlowControl flowControl) {
@@ -77,7 +79,8 @@ public final class BroadcastPushTask implements PushTask {
     public void run() {
         flowControl.reset();
         boolean done = broadcast();
-        if (done) {//done 广播结束
+        //done 广播结束
+        if (done) {
             if (finishTasks.addAndGet(flowControl.total()) == 0) {
                 report();
             }
@@ -90,15 +93,14 @@ public final class BroadcastPushTask implements PushTask {
     private boolean broadcast() {
         try {
             iterator.forEachRemaining(entry -> {
-
                 String userId = entry.getKey();
                 entry.getValue().forEach((clientType, router) -> {
-
                     Connection connection = router.getRouteValue();
-
-                    if (checkCondition(condition, connection)) {//1.条件检测
+                    //1.条件检测
+                    if (checkCondition(condition, connection)) {
                         if (connection.isConnected()) {
-                            if (connection.getChannel().isWritable()) { //检测TCP缓冲区是否已满且写队列超过最高阀值
+                            //检测TCP缓冲区是否已满且写队列超过最高阀值
+                            if (connection.getChannel().isWritable()) {
                                 PushMessage
                                         .build(connection)
                                         .setContent(message.getContent())
@@ -114,26 +116,28 @@ public final class BroadcastPushTask implements PushTask {
                             mPushServer.getRouterCenter().getLocalRouterManager().unRegister(userId, clientType);
                         }
                     }
-
                 });
-
             });
         } catch (OverFlowException e) {
             //超出最大限制，或者遍历完毕，结束广播
             return e.isOverMaxLimit() || !iterator.hasNext();
         }
-        return !iterator.hasNext();//遍历完毕, 广播结束
+        //遍历完毕, 广播结束
+        return !iterator.hasNext();
     }
 
     private void report() {
         Logs.PUSH.info("[Broadcast] task finished, cost={}, message={}", (System.currentTimeMillis() - begin), message);
-        mPushServer.getPushCenter().getPushListener().onBroadcastComplete(message, timeLine.end().getTimePoints());//通知发送方，广播推送完毕
+        //通知发送方，广播推送完毕
+        mPushServer.getPushCenter().getPushListener().onBroadcastComplete(message, timeLine.end().getTimePoints());
     }
 
     private boolean checkCondition(Condition condition, Connection connection) {
-        if (condition == AwaysPassCondition.I) return true;
+        if (condition == AwaysPassCondition.I) {
+            return true;
+        }
         SessionContext sessionContext = connection.getSessionContext();
-        Map<String, Object> env = new HashMap<>();
+        Map<String, Object> env = new HashMap<>(5);
         env.put("userId", sessionContext.userId);
         env.put("tags", sessionContext.tags);
         env.put("clientVersion", sessionContext.clientVersion);
@@ -142,9 +146,9 @@ public final class BroadcastPushTask implements PushTask {
         return condition.test(env);
     }
 
-    //@Override
-    private void operationComplete(ChannelFuture future, String userId) throws Exception {
-        if (future.isSuccess()) {//推送成功
+    private void operationComplete(ChannelFuture future, String userId) {
+        //推送成功
+        if (future.isSuccess()) {
             successUserIds.add(userId);
             Logs.PUSH.info("[Broadcast] push message to client success, userId={}, message={}", message.getUserId(), message);
         } else {//推送失败

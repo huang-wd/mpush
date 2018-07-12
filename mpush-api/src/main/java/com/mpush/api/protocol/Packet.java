@@ -26,7 +26,7 @@ import io.netty.channel.Channel;
 import java.net.InetSocketAddress;
 
 /**
- * Created by ohun on 2015/12/19.
+ * 主要是协议部分的编解码和包的完整性校验，最大长度校验等
  * length(4)+cmd(1)+cc(2)+flags(1)+sessionId(4)+lrc(1)+body(n)
  *
  * @author ohun@live.cn
